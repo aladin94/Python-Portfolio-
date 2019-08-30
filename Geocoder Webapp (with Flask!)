@@ -1,0 +1,109 @@
+### This program is essentially a Webapp designed with Flask for the backend, and modern html/css styling for the Frontend. When ran, a website will be created. Then, the user needs to submit a CSV file which has to have a column named "address". The webapp will return a DataFrame with the user's CSV file in addition to the Longitude/Latitude coordinates of any address provided. KEEP IN MIND, the code has trouble running in Jupyter; running Flask in a command terminal, and the webapp code in another IDE would yield better results. The code works nonetheless.
+
+### Frontend Interface. Includes homepage and download page's html code:
+%%HTML
+
+<!DOCTYPE html>
+<html lang="en">
+<title>Geocoder Webapp</title>
+<head>
+  <link href="C:\Users\admir\Desktop\project X\static\main.css" rel="stylesheet">
+
+
+</head>
+  <body>
+    <div class= "container">
+      <h1>Geocoder!</h1>
+      <h3>Upload your CSV file.
+        <form action="{{url_for('success_table')}}" method="POST" enctype="multipart/form-data">
+          <input type='file' name='file'> <br>
+          <button type="submit"> Submit </button>
+        </form>
+      <div class="output">
+        {{text|safe}}
+        {% include btn ignore missing %}
+      </div>
+    </div>
+    </body>
+  </html>
+
+### Backend Code:
+import numpy as np
+import pandas as pd
+from geopy.geocoders import ArcGIS
+import datetime
+from flask import Flask, render_template, request
+from IPython.core.display import display, HTML
+
+
+app=Flask(__name__)
+
+"""The index.html represents the homepage of the webapp"""
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/success-table", methods=['POST'])
+def success_table():
+    global filename
+    if request.method=='POST':
+        file=request.files["file"]
+        try:
+            df=pandas.read_csv(file)
+            geo=ArcGIS()
+            df['Coordinates']=df["Address"].apply(geo.geocode)
+            df['Latitude']=df['Coordinates'].apply(lambda x: x.latitude if x != None else None)
+            df['Longitude']=df['Coordinates'].apply(lambda x: x.longitude if x != None else None)
+            df=df.drop('Coordinates', 1)
+            filename=datetime.datetime.now().strftime("uploads/%Y-%m-%d-%H-%M-%S-%f"+".csv")
+            df.to_csv(filename, index=None)
+            return render_template("index.html", text=df.to_html(), btn='download.html')
+        except:
+            return render_template("index.html", text="Error. Make sure your CSV file has a column named Address!")
+
+
+@app.route("/download-file/")
+def download():
+    return send_file(filename, attachment_filename='yourfile.csv', as_attachment=True)
+
+if __name__ == '__main__':
+    app.debug=True
+    app.run()
+
+### This is the CSS code that would've been used to decorate the webapp. However, it does not work properly in Jupyter notebook:
+"""
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.container {
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  background-color: #005555
+  color: #e6ffff;
+  overflow: hidden;
+  text-align: center;
+}
+
+.container h1 {
+  font-family: Arial, sans-serif;
+  font-size: 40px;
+  color: #DDCCEE;
+  margin-top: 100px;
+}
+
+.container form{
+  width: 300px;
+  margin: auto;
+}
+
+.container button{
+  width: 85px;
+  height: 40px;
+  background-color: steelblue;
+}
+"""
