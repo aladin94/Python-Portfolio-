@@ -1,0 +1,32 @@
+## Sample example of using the BeautifulSoup library in python to pull HTML code out of webpages.
+
+# Necessary Imports
+import requests
+from bs4 import BeautifulSoup
+
+#Some websites require a header paramter in the 'get' method.
+req = requests.get("http://www.pyclass.com/example.html", headers={'User-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0'})
+cont=r.content
+print (cont)
+
+soup=BeautifulSoup(cont,"html.parser")
+print (soup.prettify())
+
+cities=soup.find_all("div", {"class":"cities"})
+cities (output) = 
+ [<div class="cities">
+ <h2>London</h2>
+ <p>London is the capital of England and it's been a British settlement since 2000 years ago. </p>
+ </div>, <div class="cities">
+ <h2>Paris</h2>
+ <p>Paris is the capital city of France. It was declared capital since 508.</p>
+ </div>, <div class="cities">
+ <h2>Tokyo</h2>
+ <p>Tokyo is the capital of Japan and one of the most populated cities in the world.</p>
+ </div>]
+
+for item in cities:
+    print(item.find_all("p")[0].text)
+### output: London is the capital of England and it's been a British settlement since 2000 years ago. 
+Paris is the capital city of France. It was declared capital since 508.
+Tokyo is the capital of Japan and one of the most populated cities in the world.
