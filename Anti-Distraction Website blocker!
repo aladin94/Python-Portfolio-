@@ -1,0 +1,33 @@
+### Import Time module to be used in our background process; the program will essentially check (every 5 seconds) whether the time is between 9PM-2AM. If so, it will "ban" me from accessing the sites included in "website_lists", during those hour to prevent me from being distracted. Therefore, making me more productive (hopefully)!
+
+import time
+from datetime import datetime as dt
+
+### Various variables being instantiated to objects that we'll need for our While loop. 
+hosts_temp = "hosts"
+hosts_path= r"C:\Windows\System32\drivers\etc\hosts"
+redirect="127.0.0.1"
+website_list=["www.yahoo.com", "www.reddit.com","www.youtube.com"]
+
+### This While loop will use Datetime's calendar methods to compare whether the current moment is between the provided time ranges (21:00-02:00). Clearly, I'm a bit of a night owl. If it's currently Work Time, the program will add the website_list items to my host file, which will in turn ban me from visiting those sites and redirect me to a local ip.
+
+while True:
+    if dt(dt.now().year,dt.now().month,dt.now().day,21) < dt.now() < dt(dt.now().year,dt.now().month,dt.now().day, 2):
+        print ("Time to work!")
+        with open(hosts_path, 'r+') as file:
+            content=file.read()
+            for website in website_list:
+                if website in content:
+                    pass
+                else:
+                    file.write(redirect+" "+ website+"\n")
+    else:
+        with open(hosts_path, 'r+') as file:
+            content=file.readlines()
+            file.seek(0)
+            for line in content:
+                if not any(website in line for website in website_list):
+                    file.write(line)
+                file.truncate()
+            print("Break Time!")
+        time.sleep(5)
