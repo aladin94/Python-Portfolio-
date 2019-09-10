@@ -1,0 +1,20 @@
+import keras
+from keras.models import Sequential
+from keras.layers import Dense
+
+classifier = Sequential()
+
+#Add the input layer and 1st hidden layer with Recktifier activator.
+classifier.add(Dense(output_dim = 6, init= 'uniform', activation = 'relu', input_dim = 11))
+
+#Add the 2nd hidden layer
+classifier.add(Dense(output_dim = 6, init= 'uniform', activation = 'relu'))
+
+#Add the output layer
+classifier.add(Dense(output_dim = 1, init= 'uniform', activation = 'sigmoid'))
+
+#Compile the Neural Network
+classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+
+#Fit the ANN to training set
+classifier.fit(X_train, Y_train, batch_size = 1, np_epoch = 300)
