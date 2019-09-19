@@ -1,0 +1,17 @@
+#In order to use the Grid Search method (for finding best options of Hyper Paramaters) in PYthon, you have to run the following code after: 1) Importng dataset and train/test/splitting it, 2)  Data preprocesing phase, 3) creating your classifier object with whichever ML model you choose, 4) Checking the test set results.
+
+code:
+
+from sklearn.model_selection import GridSearchCV
+parameters = [{'C': [1, 10, 100, 1000], 'kernel' : ['linear']},
+              {'C': [1, 10, 100, 1000], 'kernel' : ['rbf'], 'gamma' : [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]}]
+grid_search = GridSearchCV(estimator = classifier, param_grid = paramaters, scoring = 'accuracy', cv = 10, n_jobs = -1)
+grid_search = grid_search.fit(X_train, y_train)
+best_accuracy = grid_search.best_score_
+best_paramaters = grid_search.best_params_
+             
+explanation: First, import the GridSearchCV function. Then, create a list of dictionaries named 'paramaters'. Here the keys will be the HyperParameters you are curious about, and the key values would be a list of options you want to test (in order to identify which would yield best results). The 'grid_search' variable applies the function to the classifier, param_grid takes in the parameters variable in order to run tests on them, 'scoring' is the metric you want to base your success on (accuracy, recall, precision, etc), 'cv' represents the number of Folds to run, and 'n_jobs = -1' is essnetially telling your machine to run all of it's CPUs incase your dataset is massive.
+
+best_accuracy and best_paramaters would obviously return the highest accuracy and list of parameters to use for your model.
+
+Thank you.
