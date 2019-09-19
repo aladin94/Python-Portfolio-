@@ -1,0 +1,9 @@
+##After you finish train/test/splitting your data, and scaling the data, and once you've chosen the classifier for the model, you can finally use K-Fold Cross Validation to measure the accuracy of your model!
+
+from sklearn.model_selection import cross_val_score
+accuracies = cross_val_score(estimator = classifier, X = X_train, y = y_train, cv=10)
+
+#Here we create an 'accuracies' variable which will be a vector that holds the scores of the accuracies. The paramaters include the estimator (which is the classifier object of which ML algorithm you choose, X & Y variables are the data you are plugging in, and cv stands for the number of Folds you want to test with, 10 being the norm.
+
+To test the variance or mean of the accuracies, simply run this code:
+accuracies.mean() or accuracies.std()
